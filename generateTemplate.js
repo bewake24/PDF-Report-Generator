@@ -18,11 +18,11 @@ async function createPDFTemplate() {
   page.drawText('      STUDENT REPORT TEMPLATE      ', { x: 120, y: 330, size: 20 });
   page.drawText('-----------------------------', { x: 50, y: 310 });
 
-  page.drawText('Name       : {{name}}', { x: 50, y: 270 });
-  page.drawText('ID         : {{id}}', { x: 50, y: 240 });
-  page.drawText('Roll No    : {{roll}}', { x: 50, y: 210 });
-  page.drawText('Marks      : {{marks}} / {{full_marks}}', { x: 50, y: 180 });
-  page.drawText('Percentile : {{percentile}} %', { x: 50, y: 150 });
+  page.drawText('Name       : ', { x: 50, y: 270 });
+  page.drawText('ID         : ', { x: 50, y: 240 });
+  page.drawText('Roll No    : ', { x: 50, y: 210 });
+  page.drawText('Marks      : ', { x: 50, y: 180 });
+  page.drawText('Percentile : ', { x: 50, y: 150 });
 
   page.drawText('-----------------------------', { x: 50, y: 120 });
 
@@ -30,7 +30,7 @@ async function createPDFTemplate() {
   const pdfBytes = await pdfDoc.save();
 
   // Step 6: Save the PDF template to a file
-  fs.writeFileSync('Student_Report_Template.pdf', pdfBytes);
+  fs.writeFileSync('template.pdf', pdfBytes);
   console.log('PDF template created successfully!');
 }
 

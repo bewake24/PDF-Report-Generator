@@ -7,37 +7,35 @@ const workbook = XLSX.readFile("students.xlsx");
 const sheetName = workbook.SheetNames[0]; // Get the first sheet
 const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
-// Step 2: Function to generate a PDF for a student using the template
+// Step 2: Function to modify an existing PDF with student data
 async function generatePDF(student) {
   const { Name, Roll, Marks, Percentile } = student;
   const ID = student.Id;
   const Full_Marks = student["Full Marks"];
 
-  // Create a new PDF document
-  const pdfDoc = await PDFDocument.create();
+  // Load the existing PDF template
+  const existingPdfBytes = fs.readFileSync("template.pdf");
+  const pdfDoc = await PDFDocument.load(existingPdfBytes); // Load the existing PDF
 
-  // Add a blank page to the PDF
-  const page = pdfDoc.addPage([600, 400]);
+  // Add a new page or access an existing one if needed
+  const [page] = pdfDoc.getPages(); // Get the first page
 
   // Set up the font
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   page.setFont(font);
   page.setFontSize(18);
 
-  // Draw the template content (with placeholders)
-  page.drawText("-----------------------------", { x: 200, y: 330 });
-  page.drawText('Student Report', { x: 200, y: 350, size: 25, color: rgb(0, 0, 0) });
-  page.drawText(`Name       : ${Name}`, { x: 50, y: 300 });
-  page.drawText(`ID         : ${ID}`, { x: 50, y: 270 });
-  page.drawText(`Roll No    : ${Roll}`, { x: 50, y: 240 });
-  page.drawText(`Marks      : ${Marks} / ${Full_Marks}`, { x: 50, y: 210 });
-  page.drawText(`Percentile : ${Percentile}%`, { x: 50, y: 180 });
-  page.drawText("-----------------------------", { x: 50, y: 120 });
+  // Draw student data on the existing PDF template
+  page.drawText(`${Name}`, { x: 150, y: 270 });
+  page.drawText(`${ID}`, { x: 150, y: 240 });
+  page.drawText(`${Roll}`, { x: 150, y: 210 });
+  page.drawText(`${Marks} / ${Full_Marks}`, { x: 150, y: 180 });
+  page.drawText(`${Percentile}%`, { x: 150, y: 150 });
 
-  // Serialize the PDFDocument to bytes
+  // Serialize the modified PDF to bytes
   const pdfBytes = await pdfDoc.save();
 
-  // Save the PDF with the student’s name as the filename
+  // Save the modified PDF with the student’s name as the filename
   const filePath = `./reports/${Name}_Report.pdf`;
   fs.writeFileSync(filePath, pdfBytes);
   console.log(`Report generated for ${Name}`);
@@ -60,3 +58,4 @@ async function generateAllReports() {
 generateAllReports().catch((err) =>
   console.error("Error generating reports:", err)
 );
+
